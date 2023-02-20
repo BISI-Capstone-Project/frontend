@@ -8,7 +8,7 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-         BISI Capston Project
+         BISI Capston Project 2023
         </p>
         <small>Coming soon</small>
       </header>
