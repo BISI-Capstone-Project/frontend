@@ -1,6 +1,7 @@
 import logo from './ac.png';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
+import Main from './Main';
 
 function App() {
   return (
@@ -10,7 +11,7 @@ function App() {
         <p>
          BISI Capston Project 2023
         </p>
-        <small>Coming soon</small>
+        <Main />
       </header>
     </div>
   );
