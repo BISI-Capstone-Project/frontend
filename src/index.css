@@ -5,6 +5,9 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #131519 !important;
+  height: 100%;
+  overflow-y: hidden !important;
 }
 
 code {
@@ -12,7 +15,9 @@ code {
     monospace;
 }
 
+
 .loader {
+  display: inline-block;
   width: 48px;
   height: 48px;
   border-radius: 50%;
@@ -24,6 +29,7 @@ code {
   box-sizing: border-box;
   position: absolute;
   inset: 0px;
+  margin: 0 auto !important;
   border-radius: 50%;
   border: 5px solid #FFF;
   animation: prixClipFix 2s linear infinite ;

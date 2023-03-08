@@ -1,17 +1,14 @@
 .App {
-  text-align: center;
+  /* text-align: center; */
 }
 
 .App-logo {
-  height: 10vh;
+  height: 5vh;
   border-radius: 50%;
   pointer-events: none;
 }
 
-
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
   padding-top: 1em;;
   align-items: center;
   justify-content: center;
