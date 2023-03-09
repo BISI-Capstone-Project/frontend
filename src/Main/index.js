@@ -42,29 +42,13 @@ const Main = () => {
     const [load, setLoad] = useState(true);
     const [forecastResults, setForecastResults] = useState(null);
     const [tab, setTab] = useState('ml');
-    const [status, setStatus] = useState([
-        // {
-        //     'setp': 1,
-        //     'name': 'Data extraction',
-        //     'status': false,
-        //     'running': false,
-        //     'msg': '',
-        // },
-        // {
-        //     'setp': 2,
-        //     'name': 'Generate EDA',
-        //     'status': false,
-        //     'running': false,
-        //     'msg': '',
-        // },
-        {
-            'setp': 3,
-            'name': 'Machine Learning',
-            'status': false,
-            'running': false,
-            'msg': '',
-        },
-    ]);
+    const [status, setStatus] = useState({
+        'setp': 3,
+        'name': 'Machine Learning',
+        'status': false,
+        'running': false,
+        'msg': '',
+    });
 
     const handleError = () => {
         toast.error('An error occurred');
@@ -80,42 +64,20 @@ const Main = () => {
     const mlProcessing = () => API.ml().then(
         (response) => {
             setForecastResults(response.data);
-            const s = status;
-            s[0].status = true;
-            s[0].msg = response.data.status;
-            setStatus(s);
-        },
-        () => handleError(),
-    );
-
-    const edaCreation = () => API.eda().then(
-        async (response) => {
-            const s = status;
-            s[1].status = true;
-            s[2].running = true;
-            s[1].msg = response.data.status;
-            setStatus(s);
-            mlProcessing();
-        },
-        () => handleError(),
-    );
-
-    const dataExtract = () => API.extract().then(
-        async (response) => {
-            const s = status;
-            s[0].status = true;
-            s[0].msg = response.data.status;
-            s[1].running = true;
-            setStatus(s);
-            edaCreation();
+            setStatus((obj) => ({
+                ...obj,
+                status: true,
+                msg: response.data.status
+            }));
         },
         () => handleError(),
     );
 
     const handleForecasting = () => {
-        const s = status;
-        s[0].running = true;
-        setStatus(s);
+        setStatus((obj) => ({
+            ...obj,
+            running: true,
+        }));
         mlProcessing();
     };
 
@@ -125,36 +87,28 @@ const Main = () => {
         if (tab === 'eda') toast.info('Loading EDA');
     }, [tab]);
 
-    useEffect(() => {
-        if (forecastResults) {
-            console.log(forecastResults?.results);
-        }
-    }, [forecastResults]);
-
     const TableStatus = () => useMemo(() => (
         status ? (
             <tbody>
-                {status.map((s) => (
-                    <tr key={s.setp}>
-                        <td>
-                            {s.name}
-                        </td>
-                        <td style={{ width: '50%', maxWidth: '200px' }}>
-                            {s.running && (
-                                <ProgressBar
-                                    variant={s.status ? 'success' : 'info'}
-                                    animated={!s.status}
-                                    style={{ width: '100%' }}
-                                    now={100}
-                                    label={(s.running && !s.status) ? 'Running' : s.msg}
-                                />
-                            )}
-                        </td>
-                    </tr>
-                ))}
+                <tr key={status.setp}>
+                    <td>
+                        {status.name}
+                    </td>
+                    <td style={{ width: '50%', maxWidth: '200px' }}>
+                        {status.running && (
+                            <ProgressBar
+                                variant={status.status ? 'success' : 'info'}
+                                animated={!status.status}
+                                style={{ width: '100%' }}
+                                now={100}
+                                label={(status.running && !status.status) ? 'Running' : status.msg}
+                            />
+                        )}
+                    </td>
+                </tr>
             </tbody>
         ) : null
-    ), []);
+    ), [status]);
 
     return (
         <Container>
@@ -189,7 +143,7 @@ const Main = () => {
                         <div style={{ marginLeft: '1em', marginBottom: '1em' }}>
                             <Btn
                                 onClick={() => handleForecasting()}
-                                disabled={forecastResults}
+                                disabled={forecastResults || status.running === true}
                             >
                                 {!forecastResults ? 'Click to run the model' : 'Completed'}
                             </Btn>
@@ -237,7 +191,7 @@ const Main = () => {
                                         <TableContainer>
                                             <thead>
                                                 <tr>
-                                                    <th colspan={2}>Best model:</th>
+                                                    <th colSpan={2}>Best model:</th>
                                                     <th colSpan={3}>
                                                         {`${Number(forecastResults?.results?.accuracy) * 100} %`}
                                                         {' - '}
