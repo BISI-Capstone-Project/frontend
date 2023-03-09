@@ -108,7 +108,7 @@ const Main = () => {
                 </tr>
             </tbody>
         ) : null
-    ), [status]);
+    ), []);
 
     return (
         <Container>
@@ -243,6 +243,7 @@ const Main = () => {
                             width: '100%',
                             height: '100%'
                         }}
+                        load="lazy"
                         src='https://bisi-capstone-project-2023.azurewebsites.net/static/output.html'
                     />
                 )}
