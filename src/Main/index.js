@@ -1,14 +1,23 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { ButtonGroup, Col, Navbar, ProgressBar, Row, Table } from 'react-bootstrap';
+import { ButtonGroup, Col, Navbar, ProgressBar, Row } from 'react-bootstrap';
 import logo from './../ac.png';
 import API from '../api';
 import Btn from '../styles/Button';
 import styled from 'styled-components';
-import { toast } from 'react-toastify';
+import Arrow from '../styles/Arrow';
+import Toast from '../styles/Toast';
+import CityName from '../styles/Texts';
+import Group from './Group';
+import TableContainer from '../styles/TableContainer';
 
 const Container = styled.div`
     color: #fff;
     overflow-y: scroll;
+
+    ::-webkit-scrollbar {
+        display: none;
+    }
+    margin-bottom: 20em;
 `;
 
 const CustomNavBar = styled(Navbar)`
@@ -24,21 +33,14 @@ const Content = styled.div`
     height: 100vh;
 `;
 
-const TableContainer = styled(Table)`
-    color: #c4c4c4;
-
-    tr {
-        background: #282c34;
-        border: 2px solid #1e2127;
-        margin: 1em;
-    }
-    td {
-        border: 2px solid #1e2127;
-    }
+const TemperatureFont = styled.small`
+    font-size: 1.25em;
 `;
 
 const Main = () => {
     const [appStatus, setAppStatus] = useState('Not running');
+    const [forecast, setForecast] = useState(null);
+    const [forecastLoad, setForecastload] = useState(false);
     const [load, setLoad] = useState(true);
     const [forecastResults, setForecastResults] = useState(null);
     const [tab, setTab] = useState('ml');
@@ -51,7 +53,7 @@ const Main = () => {
     });
 
     const handleError = () => {
-        toast.error('An error occurred');
+        Toast.error('An error occurred');
     };
 
     const checkStatus = () => {
@@ -73,18 +75,61 @@ const Main = () => {
         () => handleError(),
     );
 
+    const handleForecastForWeather = () => {
+        setForecastload(true);
+        Toast.promise(
+            API.weatherForecast().then(
+                (response) => {
+                    console.log(response.data.data);
+                    setForecast(response.data.data);
+                },
+            ),
+            {
+                'pending': 'Loading weather forecast',
+                'success': 'Data loaded',
+                'error': 'An error occurred',
+            }
+        );
+    };
+
     const handleForecasting = () => {
+        if (!forecastLoad) handleForecastForWeather();
         setStatus((obj) => ({
             ...obj,
             running: true,
         }));
-        mlProcessing();
+        Toast.promise(
+            mlProcessing(),
+            {
+                'pending': 'Fetching data',
+                'success': 'ML data loaded',
+                'error': 'An error occurred',
+            }
+        )
     };
 
-    useEffect(() => checkStatus(), []);
+    const getIcon = (text) => {
+        if (text.includes('High')) return 'up';
+        if (text.includes('Low')) return 'down';
+        return null;
+    };
+
+    const getText = (text) => {
+        return text
+            .replaceAll('.', "")
+            .replaceAll('plus', "")
+            .replaceAll('minus', "-")
+            .replaceAll("\"", "")
+            .replaceAll('High', '')
+            .replaceAll('Low', '');
+    };
 
     useEffect(() => {
-        if (tab === 'eda') toast.info('Loading EDA');
+        checkStatus();
+    }, []);
+
+    useEffect(() => {
+        if (tab === 'eda') Toast.info('Loading EDA');
     }, [tab]);
 
     const TableStatus = () => useMemo(() => (
@@ -109,7 +154,6 @@ const Main = () => {
             </tbody>
         ) : null
     ), []);
-
     return (
         <Container>
             <CustomNavBar>
@@ -135,10 +179,16 @@ const Main = () => {
                         >
                             EDA
                         </Btn>
+                        <Btn
+                            onClick={() => setTab('group')}
+                            disabled={tab === 'group'}
+                        >
+                            Group
+                        </Btn>
                     </ButtonGroup>
                 </div>
             </CustomNavBar>
-                {tab === 'ml' ? (
+                {tab === 'ml' && (
                     <Content>
                         <div style={{ marginLeft: '1em', marginBottom: '1em' }}>
                             <Btn
@@ -163,31 +213,77 @@ const Main = () => {
                         <Row>
                             {forecastResults && (
                                 <>
-                                    <Col xl={4} lg={4} md={12} sm={12}>
-                                        <TableContainer>
-                                            <thead>
-                                                <tr>
-                                                    <th>Date</th>
-                                                    <th>Volume</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {forecastResults && forecastResults?.results.predictions['CALENDAR_DATE'].map((result, i) => {
-                                                    return (
+                                    <Col xl={12} lg={12} md={12} sm={12}>
+                                        {forecast && (
+                                                <TableContainer>
+                                                    <thead>
                                                         <tr>
-                                                            <td>
-                                                                {result}
-                                                            </td>
-                                                            <td>
-                                                                {forecastResults?.results.predictions['ACTUAL_VOLUME'][i]}
-                                                            </td>
+                                                            <th>{' '}</th>
+                                                            <th>{' '}</th>
+                                                            <th colSpan={2}>Precipitation</th>
+                                                            <th colSpan={2}>Temperature</th>
                                                         </tr>
-                                                    )
-                                                })}
-                                            </tbody>
-                                        </TableContainer>
-                                    </Col>
-                                    <Col xl={8} lg={8} md={12} sm={12}>
+                                                        <tr>
+                                                            <th>Date</th>
+                                                            <th>Volume</th>
+                                                            <th>Day</th>
+                                                            <th>Night</th>
+                                                            <th>Day</th>
+                                                            <th>Night</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {forecast?.cities?.map((city) => (
+                                                            <>
+                                                                <tr>
+                                                                    <td
+                                                                        colSpan={7}
+                                                                        style={{ textAlign: 'center' }}
+                                                                    >
+                                                                        <CityName>
+                                                                            {city.city}
+                                                                        </CityName>
+                                                                    </td>
+                                                                </tr>
+                                                                {city?.results['period_string']?.map((item, index) => (
+                                                                    index % 2 === 0 && (
+                                                                        <tr key={`item_${index}`}>
+                                                                            <td style={{ textAlign: 'center', width: '10%' }}>
+                                                                                {forecastResults?.results.predictions[index]['CALENDAR_DATE'].substring(0, 10)}
+                                                                            </td>
+                                                                            <td>
+                                                                                {forecastResults?.results.predictions[index]['ACTUAL_VOLUME']}
+                                                                            </td>
+                                                                            <td style={{ width: '30%' }}>
+                                                                                {city.results['cloudprecip'][index].replaceAll("\"", "")}
+                                                                            </td>
+                                                                            <td style={{ width: '30%' }}>
+                                                                                {city.results['cloudprecip'][index + 1].replaceAll("\"", "")}
+                                                                            </td>
+                                                                            <td style={{ width: '10%' }}>
+                                                                                <Arrow
+                                                                                    icon={getIcon(city.results['temperatures'][index].replaceAll("\"", ""))}
+                                                                                />
+                                                                                <TemperatureFont>
+                                                                                    {getText(city.results['temperatures'][index])}
+                                                                                </TemperatureFont>
+                                                                            </td>
+                                                                            <td style={{ width: '10%' }}>
+                                                                                <Arrow
+                                                                                    icon={getIcon(city.results['temperatures'][index + 1].replaceAll("\"", ""))}
+                                                                                />
+                                                                                <TemperatureFont>
+                                                                                    {getText(city.results['temperatures'][index])}
+                                                                                </TemperatureFont>
+                                                                            </td>
+                                                                        </tr>
+                                                                    )
+                                                                ))}
+                                                            </>
+                                                        ))}
+                                                    </tbody>
+                                                </TableContainer>
+                                            )}
                                         <TableContainer>
                                             <thead>
                                                 <tr>
@@ -207,8 +303,8 @@ const Main = () => {
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {forecastResults && forecastResults?.results.models.map((result) => (
-                                                    <tr>
+                                                {forecastResults && forecastResults?.results.models.map((result, i) => (
+                                                    <tr key={`${i}_results_ml`}>
                                                         <td>
                                                             {result.name}
                                                         </td>
@@ -233,8 +329,10 @@ const Main = () => {
                             )}
                         </Row>
                     </Content>
-                ) : (
+                )}
+                {tab === 'eda' && (
                     <iframe
+                        title='EDA report'
                         style={{
                             position: 'absolute',
                             background: '#fff',
@@ -247,6 +345,7 @@ const Main = () => {
                         src='https://bisi-capstone-project-2023.azurewebsites.net/static/output.html'
                     />
                 )}
+                {tab === 'group' && <Group />}
         </Container>
     )
 };

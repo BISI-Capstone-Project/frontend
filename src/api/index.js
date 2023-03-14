@@ -10,7 +10,8 @@ export default {
         ),
     },
     extract: () => axios.get(`${baseURL}/extract/`),
-    ml: () => axios.get(`${baseURL}/ml/`),
+    ml: () => axios.get(`${baseURL}/ml-cache/`),
     eda: () => axios.get(`${baseURL}/eda/`),
     edaFile: () => axios.get(`${rawURL}/static/output.html`),
+    weatherForecast: () => axios.get(`${baseURL}/weather-forecast/`),
 };
