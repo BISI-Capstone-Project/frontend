@@ -9,6 +9,7 @@ import Toast from '../styles/Toast';
 import CityName from '../styles/Texts';
 import Group from './Group';
 import TableContainer from '../styles/TableContainer';
+import BI from '../BI';
 
 const Container = styled.div`
     color: #fff;
@@ -63,16 +64,25 @@ const Main = () => {
         }).finally(() => setLoad(false));
     };
 
-    const mlProcessing = () => API.ml().then(
-        (response) => {
-            setForecastResults(response.data);
-            setStatus((obj) => ({
-                ...obj,
-                status: true,
-                msg: response.data.status
-            }));
+    const handleMLResponse = (response) => {
+        setForecastResults(response.data);
+        setStatus((obj) => ({
+            ...obj,
+            status: true,
+            msg: response.data.status
+        }));
+    };
+
+    const mlProcessing = async () => API.ml().then(
+        (response) => handleMLResponse(response),
+        async () => {
+            await API.runMml().then(
+                () => API.ml().then(
+                    (response) => handleMLResponse(response),
+                ),
+                () => handleError(),
+            );
         },
-        () => handleError(),
     );
 
     const handleForecastForWeather = () => {
@@ -154,6 +164,23 @@ const Main = () => {
             </tbody>
         ) : null
     ), []);
+
+    const IframeEDA = () => useMemo(() => (
+        <iframe
+            title='EDA report'
+            style={{
+                position: 'absolute',
+                background: '#fff',
+                margin: '0 auto',
+                overflowY: 'scroll',
+                width: '100%',
+                height: '100%'
+            }}
+            load="lazy"
+            src='https://bisi-capstone-project-2023.azurewebsites.net/static/output.html'
+        />
+    ), []);
+
     return (
         <Container>
             <CustomNavBar>
@@ -172,6 +199,12 @@ const Main = () => {
                             disabled={tab === 'ml'}
                         >
                             Model Training
+                        </Btn>
+                        <Btn
+                            onClick={() => setTab('bi')}
+                            disabled={tab === 'bi'}
+                        >
+                            Dashboard
                         </Btn>
                         <Btn
                             onClick={() => setTab('eda')}
@@ -330,21 +363,8 @@ const Main = () => {
                         </Row>
                     </Content>
                 )}
-                {tab === 'eda' && (
-                    <iframe
-                        title='EDA report'
-                        style={{
-                            position: 'absolute',
-                            background: '#fff',
-                            margin: '0 auto',
-                            overflowY: 'scroll',
-                            width: '100%',
-                            height: '100%'
-                        }}
-                        load="lazy"
-                        src='https://bisi-capstone-project-2023.azurewebsites.net/static/output.html'
-                    />
-                )}
+                {tab === 'bi' && BI}
+                {tab === 'eda' && <IframeEDA />}
                 {tab === 'group' && <Group />}
         </Container>
     )
