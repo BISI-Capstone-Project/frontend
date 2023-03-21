@@ -6,8 +6,10 @@ const IframeContent = styled.iframe`
     margin: 0 auto;
     overflow-y: scroll;
     width: 100%;
-    height: 100%;
-    padding: 3em;
+    height: 100% !important;
+    padding-left: 6em;
+    padding-right: 6em;
+    padding-bottom: 6em;
     background: #e9e9e9;
 `;
 

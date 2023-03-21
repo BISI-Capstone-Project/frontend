@@ -4,12 +4,15 @@ import logo from './../ac.png';
 import API from '../api';
 import Btn from '../styles/Button';
 import styled from 'styled-components';
-import Arrow from '../styles/Arrow';
 import Toast from '../styles/Toast';
 import CityName from '../styles/Texts';
 import Group from './Group';
 import TableContainer from '../styles/TableContainer';
 import BI from '../BI';
+import TbRow from '../styles/TbRow';
+import TbCell from '../styles/TbCell';
+import Icons from './Icons';
+import Temperature from './Temperature';
 
 const Container = styled.div`
     color: #fff;
@@ -23,19 +26,16 @@ const Container = styled.div`
 
 const CustomNavBar = styled(Navbar)`
     background: #282c34;
+    posotion: fixed;
     border-bottom: 1px solid #1e2127;
     padding: 0.5em;
 `;
 
 const Content = styled.div`
     padding: 2em;
-    background: #1e2127;
+    // background: #1e2127;
     display: absolute;
     height: 100vh;
-`;
-
-const TemperatureFont = styled.small`
-    font-size: 1.25em;
 `;
 
 const Main = () => {
@@ -45,6 +45,7 @@ const Main = () => {
     const [load, setLoad] = useState(true);
     const [forecastResults, setForecastResults] = useState(null);
     const [tab, setTab] = useState('ml');
+    const [forecastVolume, setForecastVolume] = useState(null);
     const [status, setStatus] = useState({
         'setp': 3,
         'name': 'Machine Learning',
@@ -90,7 +91,6 @@ const Main = () => {
         Toast.promise(
             API.weatherForecast().then(
                 (response) => {
-                    console.log(response.data.data);
                     setForecast(response.data.data);
                 },
             ),
@@ -118,14 +118,10 @@ const Main = () => {
         )
     };
 
-    const getIcon = (text) => {
-        if (text.includes('High')) return 'up';
-        if (text.includes('Low')) return 'down';
-        return null;
-    };
-
     const getText = (text) => {
         return text
+            .replaceAll('zero', '0')
+            .replaceAll(' ', '')
             .replaceAll('.', "")
             .replaceAll('plus', "")
             .replaceAll('minus', "-")
@@ -142,10 +138,41 @@ const Main = () => {
         if (tab === 'eda') Toast.info('Loading EDA');
     }, [tab]);
 
+    useEffect(() => {
+        if (forecast && forecastResults) {
+            const __list__ = [];
+            forecast?.cities.forEach((element) => {
+                try {
+                    let name = element.city;
+                    if (name === 'montreal') name = 'brossard';
+                    if (name === 'reddeer') name = 'red deer';
+
+                    const __inner_list__ = [];
+
+                    forecastResults?.results?.cities.forEach((volume, index) => {;
+                        __inner_list__.push({
+                            'volume': volume[name.toUpperCase()],
+                            'calendar_date': volume['CALENDAR_DATE'],
+                            'cloudprecip': element.results['cloudprecip'][index],
+                            'temperatures': element.results['temperatures'][index],
+                        });
+                    });
+
+                    __list__[name] = __inner_list__;
+
+                } catch (e) {
+                    console.log(e);
+                }
+            });
+
+            setForecastVolume(__list__);
+        }
+    }, [forecast]);
+
     const TableStatus = () => useMemo(() => (
         status ? (
             <tbody>
-                <tr key={status.setp}>
+                <TbRow key={status.setp}>
                     <td>
                         {status.name}
                     </td>
@@ -160,7 +187,7 @@ const Main = () => {
                             />
                         )}
                     </td>
-                </tr>
+                </TbRow>
             </tbody>
         ) : null
     ), []);
@@ -250,68 +277,73 @@ const Main = () => {
                                         {forecast && (
                                                 <TableContainer>
                                                     <thead>
-                                                        <tr>
+                                                        <TbRow>
                                                             <th>{' '}</th>
                                                             <th>{' '}</th>
                                                             <th colSpan={2}>Precipitation</th>
                                                             <th colSpan={2}>Temperature</th>
-                                                        </tr>
-                                                        <tr>
+                                                        </TbRow>
+                                                        <TbRow>
                                                             <th>Date</th>
                                                             <th>Volume</th>
                                                             <th>Day</th>
                                                             <th>Night</th>
                                                             <th>Day</th>
                                                             <th>Night</th>
-                                                        </tr>
+                                                        </TbRow>
                                                     </thead>
                                                     <tbody>
-                                                        {forecast?.cities?.map((city) => (
+                                                        {forecastVolume && Object.keys(forecastVolume).map((key) => (
                                                             <>
-                                                                <tr>
-                                                                    <td
-                                                                        colSpan={7}
-                                                                        style={{ textAlign: 'center' }}
-                                                                    >
-                                                                        <CityName>
-                                                                            {city.city}
-                                                                        </CityName>
+                                                                <TbRow style={{ textAlign: 'center' }}>
+                                                                    <td colSpan={6}>
+                                                                        <CityName>{key}</CityName>
                                                                     </td>
-                                                                </tr>
-                                                                {city?.results['period_string']?.map((item, index) => (
-                                                                    index % 2 === 0 && (
-                                                                        <tr key={`item_${index}`}>
-                                                                            <td style={{ textAlign: 'center', width: '10%' }}>
-                                                                                {forecastResults?.results.predictions[index]['CALENDAR_DATE'].substring(0, 10)}
+                                                                </TbRow>
+                                                                {forecastVolume[key].map((element, index) => {
+                                                                    const check = (arr) => {
+                                                                        if (arr?.length === 2) return [
+                                                                            arr[0], arr[1],
+                                                                        ];
+                                                                        return ['', ''];
+                                                                    };
+
+                                                                    return (
+                                                                        <TbRow
+                                                                            key={`${key}_${index}`}
+                                                                        >
+                                                                            <td style={{ width: '10%' }}>
+                                                                                {element['calendar_date'].substring(0, 10)}
+                                                                            </td>
+                                                                            <TbCell
+                                                                                style={{ width: '5%' }}
+                                                                                volume={element['volume']}
+                                                                            >
+                                                                                {element['volume']}
+                                                                            </TbCell>
+                                                                            <td>
+                                                                                {check(element['cloudprecip'])[0] && (
+                                                                                    <Icons text={check(element['cloudprecip'])[0]} />
+                                                                                )}
+                                                                                {check(element['cloudprecip'])[0].replaceAll("\"", "")}
                                                                             </td>
                                                                             <td>
-                                                                                {forecastResults?.results.predictions[index]['ACTUAL_VOLUME']}
+                                                                                <Icons text={check(element['cloudprecip'])[1]} />
+                                                                                {check(element['cloudprecip'])[1].replaceAll("\"", "")}
                                                                             </td>
-                                                                            <td style={{ width: '30%' }}>
-                                                                                {city.results['cloudprecip'][index].replaceAll("\"", "")}
-                                                                            </td>
-                                                                            <td style={{ width: '30%' }}>
-                                                                                {city.results['cloudprecip'][index + 1].replaceAll("\"", "")}
-                                                                            </td>
-                                                                            <td style={{ width: '10%' }}>
-                                                                                <Arrow
-                                                                                    icon={getIcon(city.results['temperatures'][index].replaceAll("\"", ""))}
-                                                                                />
-                                                                                <TemperatureFont>
-                                                                                    {getText(city.results['temperatures'][index])}
-                                                                                </TemperatureFont>
-                                                                            </td>
-                                                                            <td style={{ width: '10%' }}>
-                                                                                <Arrow
-                                                                                    icon={getIcon(city.results['temperatures'][index + 1].replaceAll("\"", ""))}
-                                                                                />
-                                                                                <TemperatureFont>
-                                                                                    {getText(city.results['temperatures'][index])}
-                                                                                </TemperatureFont>
-                                                                            </td>
-                                                                        </tr>
+                                                                            <Temperature
+                                                                                style={{ width: '5%' }}
+                                                                                value={getText(check(element['temperatures'])[0])}
+                                                                            >
+                                                                            </Temperature>
+                                                                            <Temperature
+                                                                                style={{ width: '5%' }}
+                                                                                value={getText(check(element['temperatures'])[1])}
+                                                                            >
+                                                                            </Temperature>
+                                                                        </TbRow>
                                                                     )
-                                                                ))}
+                                                                })}
                                                             </>
                                                         ))}
                                                     </tbody>
@@ -319,25 +351,25 @@ const Main = () => {
                                             )}
                                         <TableContainer>
                                             <thead>
-                                                <tr>
+                                                <TbRow>
                                                     <th colSpan={2}>Best model:</th>
                                                     <th colSpan={3}>
                                                         {`${Number(forecastResults?.results?.accuracy) * 100} %`}
                                                         {' - '}
                                                         {forecastResults?.results?.best_model}
                                                     </th>
-                                                </tr>
-                                                <tr>
+                                                </TbRow>
+                                                <TbRow>
                                                     <th>Name</th>
                                                     <th>MAE</th>
                                                     <th>MSE</th>
                                                     <th>R2</th>
                                                     <th>R-Squared</th>
-                                                </tr>
+                                                </TbRow>
                                             </thead>
                                             <tbody>
                                                 {forecastResults && forecastResults?.results.models.map((result, i) => (
-                                                    <tr key={`${i}_results_ml`}>
+                                                    <TbRow key={`${i}_results_ml`}>
                                                         <td>
                                                             {result.name}
                                                         </td>
@@ -353,7 +385,7 @@ const Main = () => {
                                                         <td>
                                                             {result.error['R-Squared']}
                                                         </td>
-                                                    </tr>
+                                                    </TbRow>
                                                 ))}
                                             </tbody>
                                         </TableContainer>
