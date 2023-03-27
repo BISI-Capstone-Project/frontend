@@ -349,7 +349,7 @@ const Main = () => {
                                                     </tbody>
                                                 </TableContainer>
                                             )}
-                                        <TableContainer>
+                                        <TableContainer style={{ marginBottom: '200px' }}>
                                             <thead>
                                                 <TbRow>
                                                     <th colSpan={2}>Best model:</th>
@@ -363,8 +363,7 @@ const Main = () => {
                                                     <th>Name</th>
                                                     <th>MAE</th>
                                                     <th>MSE</th>
-                                                    <th>R2</th>
-                                                    <th>R-Squared</th>
+                                                    <th>Accuracy</th>
                                                 </TbRow>
                                             </thead>
                                             <tbody>
@@ -381,9 +380,6 @@ const Main = () => {
                                                         </td>
                                                         <td>
                                                             {result.error['R2']}
-                                                        </td>
-                                                        <td>
-                                                            {result.error['R-Squared']}
                                                         </td>
                                                     </TbRow>
                                                 ))}
