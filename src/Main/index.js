@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import { ButtonGroup, Col, Navbar, ProgressBar, Row } from 'react-bootstrap';
 import logo from './../ac.png';
 import API from '../api';
@@ -33,9 +33,16 @@ const CustomNavBar = styled(Navbar)`
 
 const Content = styled.div`
     padding: 2em;
-    // background: #1e2127;
     display: absolute;
     height: 100vh;
+`;
+
+const ClickableTbRow = styled(TbRow)`
+    &:hover {
+        cursor: pointer;
+        background: #090909;
+        transition: 0.35s;
+    }
 `;
 
 const Main = () => {
@@ -53,6 +60,7 @@ const Main = () => {
         'running': false,
         'msg': '',
     });
+    const [openTb, setOpenTb] = useState([]);
 
     const handleError = () => {
         Toast.error('An error occurred');
@@ -140,6 +148,15 @@ const Main = () => {
 
     useEffect(() => {
         if (forecast && forecastResults) {
+            const cities = Object.keys(forecastResults?.results?.means);
+            const obj = {}
+
+            cities.forEach((city) => {
+                obj[city.toLowerCase()] = true;
+            });
+
+            setOpenTb(obj);
+
             const __list__ = [];
             forecast?.cities.forEach((element) => {
                 try {
@@ -294,12 +311,20 @@ const Main = () => {
                                                     </thead>
                                                     <tbody>
                                                         {forecastVolume && Object.keys(forecastVolume).map((key) => (
-                                                            <>
-                                                                <TbRow style={{ textAlign: 'center' }}>
+                                                            <Fragment
+                                                                key={`${key}__`}
+                                                            >
+                                                                <ClickableTbRow
+                                                                    style={{ textAlign: 'center' }}
+                                                                    onClick={() => setOpenTb((obj) => ({
+                                                                        ...obj,
+                                                                        [key]: !openTb[key]
+                                                                    }))}
+                                                                >
                                                                     <td colSpan={6}>
                                                                         <CityName>{key}</CityName>
                                                                     </td>
-                                                                </TbRow>
+                                                                </ClickableTbRow>
                                                                 {forecastVolume[key].map((element, index) => {
                                                                     const check = (arr) => {
                                                                         if (arr?.length === 2) return [
@@ -308,43 +333,62 @@ const Main = () => {
                                                                         return ['', ''];
                                                                     };
 
+                                                                    if (openTb[key] !== true) return null;
+
                                                                     return (
                                                                         <TbRow
                                                                             key={`${key}_${index}`}
                                                                         >
-                                                                            <td style={{ width: '10%' }}>
+                                                                            <td style={{ width: '10%', textAlign: 'center' }}>
                                                                                 {element['calendar_date'].substring(0, 10)}
                                                                             </td>
                                                                             <TbCell
-                                                                                style={{ width: '5%' }}
+                                                                                style={{ width: '10%' }}
                                                                                 volume={element['volume']}
+                                                                                mean={forecastResults?.results?.means[key.toUpperCase()]}
                                                                             >
                                                                                 {element['volume']}
                                                                             </TbCell>
                                                                             <td>
-                                                                                {check(element['cloudprecip'])[0] && (
-                                                                                    <Icons text={check(element['cloudprecip'])[0]} />
-                                                                                )}
-                                                                                {check(element['cloudprecip'])[0].replaceAll("\"", "")}
+                                                                                {check(element['cloudprecip'])[0] !== '' ? (
+                                                                                    <Fragment>
+                                                                                        {check(element['cloudprecip'])[0] && (
+                                                                                            <Icons text={check(element['cloudprecip'])[0]} />
+                                                                                        )}
+                                                                                        {check(element['cloudprecip'])[0].replaceAll("\"", "")}
+                                                                                    </Fragment>
+                                                                                ) : 'N/A'}
                                                                             </td>
                                                                             <td>
-                                                                                <Icons text={check(element['cloudprecip'])[1]} />
-                                                                                {check(element['cloudprecip'])[1].replaceAll("\"", "")}
+                                                                                {check(element['cloudprecip'])[1] !== '' ? (
+                                                                                    <Fragment>
+                                                                                        {check(element['cloudprecip'])[1] && (
+                                                                                            <Icons text={check(element['cloudprecip'])[1]} />
+                                                                                        )}
+                                                                                        {check(element['cloudprecip'])[1].replaceAll("\"", "")}
+                                                                                    </Fragment>
+                                                                                ) : 'N/A'}
                                                                             </td>
-                                                                            <Temperature
-                                                                                style={{ width: '5%' }}
-                                                                                value={getText(check(element['temperatures'])[0])}
-                                                                            >
-                                                                            </Temperature>
-                                                                            <Temperature
-                                                                                style={{ width: '5%' }}
-                                                                                value={getText(check(element['temperatures'])[1])}
-                                                                            >
-                                                                            </Temperature>
+                                                                            <td>
+                                                                                {check(element['temperatures'])[0] !== '' ? (
+                                                                                    <Temperature
+                                                                                        style={{ width: '5%' }}
+                                                                                        value={getText(check(element['temperatures'])[0])}
+                                                                                    />
+                                                                                ) : 'N/A'}
+                                                                            </td>
+                                                                            <td>
+                                                                                {check(element['temperatures'])[1] !== '' ? (
+                                                                                    <Temperature
+                                                                                        style={{ width: '5%' }}
+                                                                                        value={getText(check(element['temperatures'])[1])}
+                                                                                    />
+                                                                                ) : 'N/A'}
+                                                                            </td>
                                                                         </TbRow>
                                                                     )
                                                                 })}
-                                                            </>
+                                                            </Fragment>
                                                         ))}
                                                     </tbody>
                                                 </TableContainer>

@@ -10,6 +10,7 @@ const TableContainer = styled(Table)`
         margin: 1em;
     }
     td {
+        font-size: 1.2em;
         border: 2px solid #1e2127;
     }
 `;

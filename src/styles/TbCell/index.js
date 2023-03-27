@@ -4,17 +4,16 @@ import Colors from "../Colors";
 const tbCell = styled.td`
     width: 100%;
     text-align: center;
+    font-size: 1.5em !important;
+    font-weight: bold;
 
     ${(props) => {
-        if (props?.volume > 5000) {
-            return `
-                background: ${Colors.danger} !important;
-            `;
-        }
-        if (props?.volume > 3000) {
-            return `
-                background: ${Colors.warning} !important;
-            `;
+        if (props?.volume && props?.mean) {
+            if (props?.volume > props.mean) {
+                return `
+                    background: ${Colors.danger} !important;
+                `;
+            }
         }
         return '';
     }}

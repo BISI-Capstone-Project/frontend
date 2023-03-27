@@ -33,13 +33,12 @@ const Group = () => (
                 </td>
             </tr>
             <tr>
-                <td>Taio</td>
+                <td>Tao Yang</td>
                 <td>Lead Data Clerk</td>
                 <td>
                     <ul>
-                        <li></li>
-                        <li></li>
-                        <li></li>
+                        <li>Granola bar supplier</li>
+                        <li>Costco Driver</li>
                     </ul>
                 </td>
             </tr>
