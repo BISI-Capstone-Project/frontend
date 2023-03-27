@@ -17,7 +17,7 @@ const BI = (
     <IframeContent
         title="capstone"
         load="lazy"
-        src="https://app.powerbi.com/reportEmbed?reportId=e9c2f228-d8f9-4e16-8d72-abacd3b9a936&autoAuth=true&ctid=ec1bd924-0a6a-4aa9-aa89-c980316c0449"
+        src="https://app.powerbi.com/reportEmbed?reportId=786a0b31-978b-437e-9ec6-9d5e6b530cc7&autoAuth=true&ctid=ec1bd924-0a6a-4aa9-aa89-c980316c0449"
         frameborder="0"
         allowFullScreen="true"
     />
