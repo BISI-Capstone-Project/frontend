@@ -15,9 +15,9 @@ const Group = () => (
                 <td>Project Manager</td>
                 <td>
                     <ul>
-                        <li></li>
-                        <li></li>
-                        <li></li>
+                        <li>Project Coordination</li>
+                        <li>Stakeholder Management</li>
+                        <li>Scope Management</li>
                     </ul>
                 </td>
             </tr>
