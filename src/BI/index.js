@@ -1,8 +1,8 @@
 import styled from "styled-components";
+import Colors from "../styles/Colors";
 
 const IframeContent = styled.iframe`
     position: absolute;
-    background: #fff;
     margin: 0 auto;
     overflow-y: scroll;
     width: 100%;
@@ -10,7 +10,8 @@ const IframeContent = styled.iframe`
     padding-left: 6em;
     padding-right: 6em;
     padding-bottom: 6em;
-    background: #e9e9e9;
+    padding-top: 1em;
+    background: ${Colors.background};
 `;
 
 const BI = (

@@ -5,9 +5,12 @@ const baseURL = `${rawURL}/backend`;
 
 export default {
     healthCheck: {
-        get: () => axios.get(
-            `${baseURL}/health-check/`,
-        ),
+        get: () => axios({
+            method: 'get',
+            url: `${baseURL}/health-check/`,
+            timeout: 5000,
+            signal: AbortSignal.timeout(5000),
+        })
     },
     extract: () => axios.get(`${baseURL}/extract/`),
     ml: () => axios.get(`${baseURL}/ml-cache/`),

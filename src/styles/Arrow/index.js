@@ -1,29 +1,17 @@
 import styled from 'styled-components';
+import Colors from '../Colors';
 
 const Arrow = styled.i`
     display: inline-block;
-    padding: 3px;
+    padding: 6px;
+    margin-left: 20px;
+    left: 0;
+    float: left;
 
-    ${(props) => {
-        if (props.icon) {
-            if (props.icon === 'up') {
-                return `
-                    border: solid #0a940f;
-                    border-width: 0 3px 3px 0;
-                    transform: rotate(-135deg);
-                    -webkit-transform: rotate(-135deg);
-                `
-            }
-            if (props.icon === 'down') {
-                return `
-                    border: solid #940a0a;
-                    transform: rotate(45deg);
-                    border-width: 0 3px 3px 0;
-                    -webkit-transform: rotate(45deg);
-                `
-            }
-        }
-    }}
+    border: solid ${Colors.container};
+    transform: rotate(45deg);
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
 `;
 
 export default Arrow;

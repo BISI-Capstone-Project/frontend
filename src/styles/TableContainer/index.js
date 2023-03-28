@@ -1,17 +1,20 @@
 import { Table } from 'react-bootstrap';
 import styled from 'styled-components';
+import Colors from '../Colors';
+
+const border = `2px solid ${Colors.background}`;
 
 const TableContainer = styled(Table)`
-    color: #c4c4c4;
-
+    box-shadow: 0px 2px 20px 1px #a0a0a0;
     tr {
-        background: #282c34;
-        border: 2px solid #1e2127;
+        background: ${Colors['table-background']};
+        border: ${border};
         margin: 1em;
+        color: ${Colors['table-color']};
     }
     td {
         font-size: 1.2em;
-        border: 2px solid #1e2127;
+        border: ${border};
     }
 `;
 
