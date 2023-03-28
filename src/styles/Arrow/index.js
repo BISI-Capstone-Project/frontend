@@ -4,14 +4,23 @@ import Colors from '../Colors';
 const Arrow = styled.i`
     display: inline-block;
     padding: 6px;
-    margin-left: 20px;
     left: 0;
-    float: left;
+    margin-bottom: 15px;
 
     border: solid ${Colors.container};
     transform: rotate(45deg);
-    border-width: 0 3px 3px 0;
-    -webkit-transform: rotate(45deg);
+    ${(props) => {
+        if (!props?.show) {
+            return `
+                border-width: 0 3px 3px 0;
+                -webkit-transform: rotate(45deg);
+            `;
+        }
+        return `
+            border-width: 0 3px 3px 0;
+            -webkit-transform: rotate(225deg);
+        `
+    }}
 `;
 
 export default Arrow;

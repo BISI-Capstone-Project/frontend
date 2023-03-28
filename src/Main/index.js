@@ -315,14 +315,11 @@ const Main = () => {
                                                                                 [key]: !openTb[key]
                                                                             }))}
                                                                         >
-                                                                            <td colSpan={6}>
+                                                                            <td>
+                                                                                <Arrow show={openTb[key]} />
+                                                                            </td>
+                                                                            <td colSpan={5} style={{ textAlign:'left' }}>
                                                                                 <CityName>
-                                                                                    {openTb[key] !== true && (
-                                                                                        <>
-                                                                                            <Arrow />
-                                                                                            {' '}
-                                                                                        </>
-                                                                                    )}
                                                                                     {key}
                                                                                 </CityName>
                                                                                 <small>Average volume: {forecastResults?.results?.means[key.toUpperCase()]}</small>
@@ -420,11 +417,15 @@ const Main = () => {
                                         <TableContainer style={{ marginBottom: '200px' }}>
                                             <thead>
                                                 <TbRow>
-                                                    <th colSpan={2}>Best model:</th>
+                                                    <th colSpan={2}>
+                                                        <h6>Best model:</h6>
+                                                    </th>
                                                     <th colSpan={3}>
-                                                        {`${Number(forecastResults?.results?.accuracy) * 100} %`}
-                                                        {' - '}
-                                                        {forecastResults?.results?.best_model}
+                                                        <h6>
+                                                            {`${Number(forecastResults?.results?.accuracy) * 100} %`}
+                                                            {' - '}
+                                                            {forecastResults?.results?.best_model}
+                                                        </h6>
                                                     </th>
                                                 </TbRow>
                                                 <TbRow>
