@@ -27,6 +27,11 @@ const BtnContainer = styled(Button)`
 export const NavBtn = styled(BtnContainer)`
     &:hover {
         background: ${Colors.container};
+        border-bottom: 1px solid ${Colors["table-background"]};
+    }
+
+    &:disabled {
+        background: ${Colors.container};
     }
 
 `;
