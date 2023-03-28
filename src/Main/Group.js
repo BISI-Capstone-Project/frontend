@@ -4,6 +4,7 @@ import styled from "styled-components";
 const Container = styled.div`
     margin-left: 3em;
     margin-right: 3em;
+    margin-top: 1em;
 `;
 
 const Group = () => (

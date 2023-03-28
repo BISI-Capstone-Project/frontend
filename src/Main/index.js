@@ -21,7 +21,7 @@ const Container = styled.div`
     color: #fff;
     background: ${Colors.background};
     overflow-y: scroll;
-    padding-top: 75px;
+    padding-top: 65px;
     height: 100vh;
 
     ::-webkit-scrollbar {
@@ -281,14 +281,16 @@ const Main = () => {
             </CustomNavBar>
                 {tab === 'ml' && (
                     <Content>
-                        <div style={{ marginLeft: '1em', marginBottom: '1em' }}>
-                            <Btn
-                                onClick={() => handleForecasting()}
-                                disabled={forecastResults || status.running === true}
-                            >
-                                {!forecastResults ? 'Click to run the model' : 'Completed'}
-                            </Btn>
-                        </div>
+                        {!forecastResults && !forecast && (
+                            <div style={{ marginLeft: '1em', marginBottom: '1em' }}>
+                                <Btn
+                                    onClick={() => handleForecasting()}
+                                    disabled={forecastResults || status.running === true}
+                                >
+                                    Click to run the model
+                                </Btn>
+                            </div>
+                        )}
                         <Row>
                             <Col>
                                 <TableContainer>
