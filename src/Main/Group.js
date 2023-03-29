@@ -46,8 +46,9 @@ const Group = () => (
                     <td>Lead Data Clerk</td>
                     <td>
                         <ul>
-                            <li>Granola bar supplier</li>
-                            <li>Costco Driver</li>
+                            <li>Data source management</li>
+                            <li>Data extraction</li>
+                            <li>Data validation</li>
                         </ul>
                     </td>
                 </tr>
@@ -67,9 +68,9 @@ const Group = () => (
                     <td>Visual Expert</td>
                     <td>
                         <ul>
-                            <li></li>
-                            <li></li>
-                            <li></li>
+                            <li>Power BI Development</li>
+                            <li>Data integration</li>
+                            <li>Data transformation</li>
                         </ul>
                     </td>
                 </tr>
