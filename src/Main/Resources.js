@@ -48,22 +48,22 @@ const RESOURCES = [
         'type': 'Weather daily data',
     },
     {
-        'text': 'Mississauga - Daily weather report',
+        'text': 'Mississauga - Daily weather forecast',
         'link': 'weatherstats_mississauga_forecast_daily.csv',
         'type': 'Weather Forecast',
     },
     {
-        'text': 'Victoria - Daily weather report',
+        'text': 'Victoria - Daily weather forecast',
         'link': 'weatherstats_victoria_forecast_daily.csv',
         'type': 'Weather Forecast',
     },
     {
-        'text': 'Red Deer - Daily weather report',
+        'text': 'Red Deer - Daily weather forecast',
         'link': 'weatherstats_reddeer_forecast_daily.csv',
         'type': 'Weather Forecast',
     },
     {
-        'text': 'Montreal - Daily weather report',
+        'text': 'Montreal - Daily weather forecast',
         'link': 'weatherstats_montreal_forecast_daily.csv',
         'type': 'Weather Forecast',
     }
