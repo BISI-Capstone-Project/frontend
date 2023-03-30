@@ -310,11 +310,11 @@ const Main = () => {
                                             <TbRow>
                                                 <td>
                                                     <Box red={false} />
-                                                    Under average
+                                                    Under average for the city
                                                 </td>
                                                 <td>
                                                     <Box red={true} />
-                                                    Above average
+                                                    Above average for the city
                                                 </td>
                                             </TbRow>
                                         </tbody>
