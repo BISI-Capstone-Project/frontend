@@ -299,7 +299,7 @@ const Main = () => {
                                 </TableContainer>
                             </Col>
                             {forecast && (
-                                <Col xl={3} md={6} sm={12}>
+                                <Col xl={4} md={6} sm={12}>
                                     <TableContainer>
                                         <tbody>
                                             <TbRow style={{ textAlign: 'center' }}>
