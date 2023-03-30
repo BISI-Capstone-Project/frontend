@@ -17,6 +17,7 @@ import Colors from '../styles/Colors';
 import CustomNavBar from '../styles/CustomNavbar';
 import Arrow from '../styles/Arrow';
 import Box from '../styles/Box';
+import Resources from './Resources';
 
 const Container = styled.div`
     color: #fff;
@@ -68,7 +69,9 @@ const Main = () => {
     const checkStatus = () => {
         API.healthCheck.get().then((response) => {
             if (response.status === 200) setAppStatus('Running');
-            else setAppStatus('Not running');
+            else {
+                setAppStatus('Not running');
+            }
         }).finally(() => setLoad(false));
     };
 
@@ -272,6 +275,12 @@ const Main = () => {
                             EDA
                         </NavBtn>
                         <NavBtn
+                            onClick={() => setTab('resources')}
+                            disabled={tab === 'resources'}
+                        >
+                            Resources
+                        </NavBtn>
+                        <NavBtn
                             onClick={() => setTab('group')}
                             disabled={tab === 'group'}
                         >
@@ -304,17 +313,17 @@ const Main = () => {
                                         <tbody>
                                             <TbRow style={{ textAlign: 'center' }}>
                                                 <td colSpan={2}>
-                                                    <strong>Legend</strong>
+                                                    <strong>Legend (Volume)</strong>
                                                 </td>
                                             </TbRow>
                                             <TbRow>
                                                 <td>
                                                     <Box red={false} />
-                                                    Under average for the city
+                                                    Below the average
                                                 </td>
                                                 <td>
                                                     <Box red={true} />
-                                                    Above average for the city
+                                                    Above the average
                                                 </td>
                                             </TbRow>
                                         </tbody>
@@ -509,6 +518,11 @@ const Main = () => {
                 )}
                 {tab === 'bi' && BI}
                 {tab === 'eda' && <IframeEDA />}
+                {tab === 'resources' && (
+                    <Content>
+                        <Resources />
+                    </Content>
+                )}
                 {tab === 'group' && <Group />}
         </Container>
     )
